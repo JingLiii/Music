@@ -22,7 +22,7 @@ export default {
 @import "~common/stylus/variable.stylus"
 
 #app
-  color: $color-theme
+  // color: $color-theme
 </style>
 
 
