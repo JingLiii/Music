@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <m-header></m-header>
-    Hello World
+    <router-view></router-view>
   </div>
 </template>
 
