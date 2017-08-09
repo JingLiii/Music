@@ -1,0 +1,127 @@
+<template>
+  <div class="slider" ref="slider">
+    <div class="slider-group" ref="sliderGroup">
+      <slot>
+        
+      </slot>
+    </div>
+    <div class="dots"></div>
+  </div>
+</template>
+
+<script>
+import BScroll from 'better-scroll'
+import {addClass} from 'common/js/dom'
+export default {
+  props: {
+    loop: {
+      type: Boolean,
+      default: true
+    },
+    autoPlay: {
+      type: Boolean,
+      default: true
+    },
+    interval: {
+      type: Number,
+      default: 4000
+    }
+  },
+  mounted () {
+    const _this = this
+    // 为了保证DOM的整成渲染, 一般在17毫秒左右成功
+    setTimeout(function() {
+      _this._setSliderWidth()
+      _this._initSlider()
+    }, 20)
+  },
+  methods: {
+    _setSliderWidth() {
+      // 可以直接访问子组件, 这就获取到了, 所有放着a标签, a标签中放着img标签的 父div
+      // 这个是由父组件分发而来的, 我们现在是为了设置整个slider的宽度, 必须采用动态获取的方式
+      // 也就需要去访问其中的子组件, 并知道每个子组件的宽度
+      // slider : 指的是整个一个轮播图的宽度.
+      // slider = slider-group + dots
+      // 由轮播图的内容, 和下面的小数点构成的
+      this.children = this.$refs.sliderGroup.children
+
+      // 定义父元素的宽度, 然后可以刚刚好放下哪些个变化的盒子
+      let width = 0
+      // 这个宽度指的是slider的宽度, 是随着屏幕的变化而变化的
+      let sliderWidth = this.$refs.slider.clientWidth
+      for (let i = 0; i < this.children.length; i++) {
+        // 获取到每一包含内容的div
+        let child = this.children[i]
+        // console.log(child)
+        // 给每一个每一个child设置一个父元素传进来的包含内容的div, 一个类名'slider-item'
+        addClass(child, 'slider-item')
+        // 给每一个child一个宽度
+        child.style.width = sliderWidth + 'px'
+
+        // 外层的一个宽度应该是有所的子盒子相加起来
+        width += sliderWidth
+      }
+      // 给左右克隆两个DOM , 所有宽度 是应该再加两个
+      if (this.loop) {
+        width += 2 * sliderWidth
+      }
+      // 最后给了用来盛放的盒子, 其实就是我们之前盛放li 的 ul
+      this.$refs.sliderGroup.style.width = width + 'px'
+    },
+    _initSlider() {
+      this.slider = new BScroll(this.$refs.slider, {
+        scrollX: true,
+        scrollY: false,
+        momentum: false,
+        snap: true,
+        snapLoop: this.loop,
+        snapThreshold: 0.3,
+        snapSpeed: 400,
+        click: true
+      })
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+@import "~common/stylus/variable.stylus"
+.slider
+  min-height 1px
+  .slider-group
+    position relative
+    overflow hidden
+    white-space nowrap
+    .slider-item
+      float left
+      box-sizing border-box
+      overflow hidden
+      text-align center
+      a
+        display block
+        width 100%
+        overflow hidden
+        text-decoration none
+        img
+          display block
+          width 100%
+  .dots
+    position absolute
+    right 0
+    left 0
+    bottom 12px
+    text-align center
+    font-size 0
+    .dot
+      display inline-block
+      margin 0 40px
+      width 8px
+      height 8px
+      border-radius 50%
+      background $color-text-l
+      &.active
+        width 20px
+        border-radius 5px
+        background $color-text-ll
+</style>
+
