@@ -58,7 +58,7 @@ export default {
       // 重新计算宽度
       this._setSliderWidth(true)
       // 刷新slider, slider中的元素重新生成
-      // 就避免了改变时的宽度错乱. 
+      // 就避免了改变时的宽度错乱.
       this.slider.refresh()
     })
   },
