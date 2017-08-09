@@ -15,6 +15,7 @@
 import BScroll from 'better-scroll'
 import {addClass} from 'common/js/dom'
 export default {
+  name: 'slider',
   data () {
     return {
       dots: [],
@@ -36,15 +37,14 @@ export default {
     }
   },
   mounted () {
-    const _this = this
     // 为了保证DOM的整成渲染, 一般在17毫秒左右成功
-    setTimeout(function() {
-      _this._setSliderWidth()
-      _this._initDots()
-      _this._initSlider()
+    setTimeout(() => {
+      this._setSliderWidth()
+      this._initDots()
+      this._initSlider()
       // 启动自动播放
-      if (_this.autoPlay) {
-        _this._play()
+      if (this.autoPlay) {
+        this._play()
       }
     }, 20)
 
@@ -105,8 +105,7 @@ export default {
         snap: true,
         snapLoop: this.loop,
         snapThreshold: 0.3,
-        snapSpeed: 400,
-        click: true
+        snapSpeed: 400
       })
       // 监听滚动结束了, 然后获取滚动到第几张了, 之后为doti添加应有的样式
       this.slider.on('scrollEnd', () => {
