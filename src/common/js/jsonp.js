@@ -6,20 +6,20 @@ export default function jsonp(url, data, option) {
   // 需要判断url中是否包含 ?
   // 没有的话 indexOf 返回 -1.  就会拼接一个 '?'
   // 有的话, 直接就开始拼接 '&'
-  url += (url.indexOf('?') < 0 ? '?' : '&') + param(data) 
+  url += (url.indexOf('?') < 0 ? '?' : '&') + param(data)
   return new Promise((resolve, reject) => {
     originJSONP(url, option, (err, data) => {
       if (!err) {
         resolve(data)
       } else {
-        reject(data)
+        reject(err)
       }
     })
   })
 }
 
 // 默认参数只有一层
-function param(data) {
+function param (data) {
   // 定义拼接后的整个字符串
   let str = ''
   // 循环遍历data, 并用&进行拼接
@@ -31,7 +31,7 @@ function param(data) {
     // encodeURIComponent: 同样进行转码, 同时会转码分割URL组件的特殊字符, 适用于URL参数的转码. 也就是对某个属性值进行转码
     str += `&${k}=${encodeURIComponent(value)}`
   }
-  // 看下有没有内容, 
+  // 看下有没有内容
   // 有内容的话, 去掉第一个字符 '&'
   // 没有内容的话, 返回一个空字符串
   return str ? str.substring(1) : ''
