@@ -47,9 +47,23 @@ export default {
         _this._play()
       }
     }, 20)
+
+    // 解决窗口大小改变, 但是轮播图大小不改变问题
+    // 监听窗口改变事件
+    window.addEventListener('resize', () => {
+      // 证明还没有进行初始化
+      if (!this.slider) {
+        return
+      }
+      // 重新计算宽度
+      this._setSliderWidth(true)
+      // 刷新slider, slider中的元素重新生成
+      // 就避免了改变时的宽度错乱. 
+      this.slider.refresh()
+    })
   },
   methods: {
-    _setSliderWidth() {
+    _setSliderWidth(isResize) {
       // 可以直接访问子组件, 这就获取到了, 所有放着a标签, a标签中放着img标签的 父div
       // 这个是由父组件分发而来的, 我们现在是为了设置整个slider的宽度, 必须采用动态获取的方式
       // 也就需要去访问其中的子组件, 并知道每个子组件的宽度
@@ -59,6 +73,7 @@ export default {
       this.children = this.$refs.sliderGroup.children
       // 定义父元素的宽度, 然后可以刚刚好放下哪些个变化的盒子
       let width = 0
+
       // 这个宽度指的是slider的宽度, 是随着屏幕的变化而变化的
       let sliderWidth = this.$refs.slider.clientWidth
       for (let i = 0; i < this.children.length; i++) {
@@ -69,12 +84,13 @@ export default {
         addClass(child, 'slider-item')
         // 给每一个child一个宽度
         child.style.width = sliderWidth + 'px'
-
         // 外层的一个宽度应该是有所的子盒子相加起来
         width += sliderWidth
       }
+
       // 给左右克隆两个DOM , 所有宽度 是应该再加两个
-      if (this.loop) {
+      // 因为初始化一次后, 中间盒子的个数已经变成了起个, 所以没有必要再 + 2 . 反而会造成每次的叠加
+      if (this.loop && !isResize) {
         width += 2 * sliderWidth
       }
       // 最后给了用来盛放的盒子, 其实就是我们之前盛放li 的 ul
