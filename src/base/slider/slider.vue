@@ -5,7 +5,9 @@
         
       </slot>
     </div>
-    <div class="dots"></div>
+    <div class="dots">
+      <span class="dot" v-for="(item, index) in dots" :key="item" :class="{active: currentPageIndex === index}"></span>
+    </div>
   </div>
 </template>
 
@@ -13,6 +15,12 @@
 import BScroll from 'better-scroll'
 import {addClass} from 'common/js/dom'
 export default {
+  data () {
+    return {
+      dots: [],
+      currentPageIndex: 0
+    }
+  },
   props: {
     loop: {
       type: Boolean,
@@ -32,7 +40,12 @@ export default {
     // 为了保证DOM的整成渲染, 一般在17毫秒左右成功
     setTimeout(function() {
       _this._setSliderWidth()
+      _this._initDots()
       _this._initSlider()
+      // 启动自动播放
+      if (_this.autoPlay) {
+        _this._play()
+      }
     }, 20)
   },
   methods: {
@@ -44,7 +57,6 @@ export default {
       // slider = slider-group + dots
       // 由轮播图的内容, 和下面的小数点构成的
       this.children = this.$refs.sliderGroup.children
-
       // 定义父元素的宽度, 然后可以刚刚好放下哪些个变化的盒子
       let width = 0
       // 这个宽度指的是slider的宽度, 是随着屏幕的变化而变化的
@@ -69,6 +81,7 @@ export default {
       this.$refs.sliderGroup.style.width = width + 'px'
     },
     _initSlider() {
+      // 初始化轮播图
       this.slider = new BScroll(this.$refs.slider, {
         scrollX: true,
         scrollY: false,
@@ -79,6 +92,39 @@ export default {
         snapSpeed: 400,
         click: true
       })
+      // 监听滚动结束了, 然后获取滚动到第几张了, 之后为doti添加应有的样式
+      this.slider.on('scrollEnd', () => {
+        let pageIndex = this.slider.getCurrentPage().pageX
+        if (this.loop) {
+          // 因为, 我们前面有一张重复的.
+          pageIndex -= 1
+        }
+        this.currentPageIndex = pageIndex
+        // 重复轮播
+        if (this.autoPlay) {
+          // 首先清除定时器, 不然会形成定时器的一个嵌套
+          clearTimeout(this.timer)
+          this._play()
+        }
+      })
+    },
+    // 初始化下面的Dot
+    _initDots() {
+      this.dots = new Array(this.children.length)
+    },
+    // 播放, 自动播放
+    _play() {
+      // 获取当前的页面. 因为从0开始, 所以 +1
+      let pageIndex = this.currentPageIndex + 1
+      if (this.loop) {
+        // 因为最开始有一个副本, 所以需要再加1
+        pageIndex += 1
+      }
+      this.timer = setTimeout(() => {
+        // 滚动到对应的页面, 参数(X的索引, Y的索引, 动画执行, 惠东函数)
+        // 我理解的第三个参数, 是完成需要的时间
+        this.slider.goToPage(pageIndex, 0, 400)
+      }, this.interval)
     }
   }
 }
@@ -114,7 +160,7 @@ export default {
     font-size 0
     .dot
       display inline-block
-      margin 0 40px
+      margin 0 4px
       width 8px
       height 8px
       border-radius 50%
