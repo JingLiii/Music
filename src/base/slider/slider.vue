@@ -141,6 +141,10 @@ export default {
         this.slider.goToPage(pageIndex, 0, 400)
       }, this.interval)
     }
+  },
+  destroyed () {
+    // 组件项目, 清理资源, 有利于内存
+    clearTimeout(this.timer)
   }
 }
 </script>
