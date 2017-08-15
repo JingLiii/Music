@@ -54,6 +54,7 @@ export default {
   created() {
     const _this = this
     // 组件创建完成后, 开始获取数据并渲染模板
+    // 模拟真实网速等待情况
     setTimeout(function() {
       _this._getRecommend()
       _this._getDiscList()

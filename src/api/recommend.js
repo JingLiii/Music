@@ -3,6 +3,7 @@ import {commonParams, options} from './config'
 
 import axios from 'axios'
 
+// 获取推荐首页banner数据
 export function getRecommend() {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
 
@@ -21,6 +22,7 @@ export function getRecommend() {
   return jsonp(url, data, options)
 }
 
+// 获取歌单数据
 export function getDiscList() {
   const url = '/api/getDiscList'
   // const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
