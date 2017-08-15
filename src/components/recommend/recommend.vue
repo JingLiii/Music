@@ -7,7 +7,7 @@
           <slider>
             <div :key="item.id" v-for="item in recommends">
               <a :href="item.linkUrl">
-                <img @load="loadImg" :src="item.picUrl" alt="">
+                <img class="needsclick" @load="loadImg" :src="item.picUrl" alt="">
               </a>
             </div>
           </slider>
@@ -17,7 +17,7 @@
           <ul>
             <li :key="item.dissid" v-for="item in discList" class="item" >
               <div class="icon">
-                <img width="60px" height="60px" :src="item.imgurl" alt="">
+                <img width="60px" height="60px" v-lazy="item.imgurl" alt="">
               </div>
               <div class="text">
                 <h2 class="name" v-html="item.creator.name"></h2>
@@ -76,6 +76,7 @@ export default {
     loadImg() {
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh()
+        // 实例化时, 一定保证scroll, 在dom更新的时候, 重新计算高度
         this.checkLoaded = true
       }
     }
