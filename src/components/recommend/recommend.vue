@@ -13,7 +13,15 @@
       <div class="recommend-list">
         <h1 class="list-title">热门歌单推荐</h1>
         <ul>
-
+          <li :key="item.dissid" v-for="item in discList" class="item" >
+            <div class="icon">
+              <img width="60px" height="60px" :src="item.imgurl" alt="">
+            </div>
+            <div class="text">
+              <h2 class="name" v-html="item.creator.name"></h2>
+              <p class="desc" v-html="item.dissname"></p>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -28,7 +36,8 @@ import {ERR_OK} from 'api/config'
 export default {
   data () {
     return {
-      recommends: []
+      recommends: [],
+      discList: []
     }
   },
   // 钩子函数, 组件创建完成
@@ -45,7 +54,8 @@ export default {
       })
       getDiscList().then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res)
+          this.discList = res.data.list
+          console.log(this.discList)
         }
       })
     }
@@ -59,10 +69,10 @@ export default {
 <style lang="stylus" scoped>
 @import "~common/stylus/variable.stylus"
 .recommend
-  position fixed
+  // position fixed
   width 100%
   top 88px
-  bottom 0
+  // bottom 0
   .recommend-content
     height 100%
     overflow hidden
@@ -77,4 +87,29 @@ export default {
         text-align center
         font-size $font-size-medium
         color $color-theme
+      .item
+        display flex
+        // box-sizing border-box
+        align-items center
+        padding 0 20px 20px 20px
+        // background-color #add
+        .icon
+          // background-color #eee
+          flex 0 0 60px
+          font-size 0
+          width 60px
+          padding-right 20px
+        .text
+          display flex
+          flex-direction column
+          justify-content center
+          flex 1
+          line-height 20px
+          overflow hidden
+          font-size $font-size-medium
+          .name
+            margin-bottom 10px
+            color $color-text
+          .desc
+            color $color-text-d
 </style>
