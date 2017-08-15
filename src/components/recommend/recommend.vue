@@ -1,34 +1,38 @@
 <template>
   <div class="recommend">
-    <div class="recommend-content">
-      <div v-if="recommends.length" class="slider-wrapper">
-        <slider>
-          <div :key="item.id" v-for="item in recommends">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl" alt="">
-            </a>
-          </div>
-        </slider>
-      </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul>
-          <li :key="item.dissid" v-for="item in discList" class="item" >
-            <div class="icon">
-              <img width="60px" height="60px" :src="item.imgurl" alt="">
+    <scroll ref="scroll" class="recommend-content" :data="discList">
+      <!-- 因为需要绑定列表和wrapper同时滚动 然后在父级元素做滚动 -->
+      <div>
+        <div v-if="recommends.length" class="slider-wrapper">
+          <slider>
+            <div :key="item.id" v-for="item in recommends">
+              <a :href="item.linkUrl">
+                <img @load="loadImg" :src="item.picUrl" alt="">
+              </a>
             </div>
-            <div class="text">
-              <h2 class="name" v-html="item.creator.name"></h2>
-              <p class="desc" v-html="item.dissname"></p>
-            </div>
-          </li>
-        </ul>
+          </slider>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li :key="item.dissid" v-for="item in discList" class="item" >
+              <div class="icon">
+                <img width="60px" height="60px" :src="item.imgurl" alt="">
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"></h2>
+                <p class="desc" v-html="item.dissname"></p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </scroll>
   </div>
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
 import {getRecommend, getDiscList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
@@ -37,14 +41,21 @@ export default {
   data () {
     return {
       recommends: [],
-      discList: []
+      discList: [],
+      checkLoaded: false
     }
   },
   // 钩子函数, 组件创建完成
   created() {
-    this._getRecommend()
+    const _this = this
+    // 组件创建完成后, 开始获取数据并渲染模板
+    setTimeout(function() {
+      _this._getRecommend()
+    }, 2000)
+    this._getDiscList()
   },
   methods: {
+    // 获取推荐数据
     _getRecommend () {
       var _this = this
       getRecommend().then((res) => {
@@ -52,16 +63,26 @@ export default {
           _this.recommends = res.data.slider
         }
       })
+    },
+    // 获取歌单列表数据
+    _getDiscList() {
       getDiscList().then((res) => {
         if (res.code === ERR_OK) {
           this.discList = res.data.list
-          console.log(this.discList)
         }
       })
+    },
+    // 当一张图片加载完成后, 再一次渲染滚动部分, 以保证正确的高度
+    loadImg() {
+      if (!this.checkLoaded) {
+        this.$refs.scroll.refresh()
+        this.checkLoaded = true
+      }
     }
   },
   components: {
-    Slider
+    Slider,
+    Scroll
   }
 }
 </script>
@@ -69,10 +90,11 @@ export default {
 <style lang="stylus" scoped>
 @import "~common/stylus/variable.stylus"
 .recommend
-  // position fixed
+  // 只有固定定位后, 才能不影响本来父元素的高度, 达到自己的滚动效果
+  position fixed
   width 100%
   top 88px
-  // bottom 0
+  bottom 0
   .recommend-content
     height 100%
     overflow hidden
