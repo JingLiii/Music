@@ -27,6 +27,10 @@
           </ul>
         </div>
       </div>
+      <!-- 未渲染的时候, 做个处理 -->
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -34,6 +38,7 @@
 <script>
 import Scroll from 'base/scroll/scroll'
 import Slider from 'base/slider/slider'
+import Loading from 'base/loading/loading'
 import {getRecommend, getDiscList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
 
@@ -51,8 +56,8 @@ export default {
     // 组件创建完成后, 开始获取数据并渲染模板
     setTimeout(function() {
       _this._getRecommend()
-    }, 2000)
-    this._getDiscList()
+      _this._getDiscList()
+    }, 1200)
   },
   methods: {
     // 获取推荐数据
@@ -83,7 +88,8 @@ export default {
   },
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
@@ -135,4 +141,9 @@ export default {
             color $color-text
           .desc
             color $color-text-d
+    .loading-container
+      position absolute
+      width 100%
+      top 50%
+      transform translateY(-50%)
 </style>

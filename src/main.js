@@ -15,7 +15,6 @@ fastclick.attach(document.body)
 Vue.use(VueLazyLoad, {
   loading: require('common/image/loading_eat.gif')
 })
-
 // Vue.config.productionTip = false
 import 'common/stylus/index.stylus'
 
