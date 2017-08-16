@@ -1,5 +1,6 @@
 <template>
   <scroll class="listview" :data="data">
+    <!-- 歌手左列表 -->
     <!-- 整个外层的一个嵌套, 例如热门是一块, a是一块 -->
     <ul>
       <li v-for="group in data" :key="group.title" class="list-group" >
@@ -12,6 +13,14 @@
         </ul>
       </li>
     </ul>
+    <!-- 右侧关键字列表 -->
+    <div class="list-shortcut">
+      <ul>
+        <li v-for="item in shortcutList" :key="item" class="item">
+          {{item}}
+        </li>
+      </ul>
+    </div>
   </scroll>
 </template>
 
@@ -27,6 +36,15 @@ export default {
   },
   components: {
     Scroll
+  },
+  // 通过计算属性, 根据data中每一项中的title, 形成一个计算属性, 获取右侧关键字列表
+  computed: {
+    shortcutList() {
+      // 返回data的一个遍历数组, 去掉第一项
+      return this.data.map((group) => {
+        return group.title.substr(0, 1)
+      })
+    }
   }
 }
 </script>
@@ -60,5 +78,28 @@ export default {
         margin-left 20px
         color $color-text-l
         font-size $font-size-medium
+  .list-shortcut
+    position absolute
+    z-index 30
+    right 0
+    top 50%
+    transform translateY(-50%)
+    width 20px
+    padding 20px 0px
+    border-radius 10px
+    background-color $color-background-d
+    font-family Helvetica
+    .item
+      padding 3px
+      line-height 1
+      color $color-text-l
+      font-size $font-size-small
+      &.current
+        color $color-theme
+  .loading-container
+    position absolute
+    width 100%
+    top 50%
+    transform translateY(-50%)
 </style>
 
