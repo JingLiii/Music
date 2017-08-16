@@ -52,6 +52,17 @@
       },
       refresh() { // 强制重新刷新better-scroll
         this.scroll && this.scroll.refresh()
+      },
+      scrollTo() { // 滚动到指定的位置
+        // 调用scroll的原因是, 这个方法不一定在哪里调用, this的指向容易不明确
+        // 但是始终不明白传入arguments的原因
+        this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+      },
+      scrollToElement() { // 滚动到指定元素
+        // arguments是个数组, 把参数传进去.
+        // arguments是调用这个方法时的参数
+        // 这样的话, 就不需要再去添加形参进行传递了
+        this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
       }
     },
     // 监控数据变化
