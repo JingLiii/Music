@@ -23,6 +23,11 @@
       data: {
         type: Array,
         default: null
+      },
+      // 是否监听滚动事件
+      listenScroll: {
+        type: Boolean,
+        default: false
       }
     },
     // 组件实例化的时候
@@ -30,6 +35,17 @@
       // 确保DOM元素渲染
       setTimeout(() => {
         this._initScroll()
+        // 是否监听scroll
+        if (this.listenScroll) {
+          const _this = this
+          // 然后让这个sroll实例, 监听滚动事件
+          this.scroll.on('scroll', (pos) => {
+            // 获取到滚动的位置
+            // 然后给父组件派发一个事件出去, 并且把pos参数传出去
+            // 这里的this指向了scroll实例, 不再是这个组件, 所以需要缓存this
+            _this.$emit('scroll', pos)
+          })
+        }
       }, 20)
     },
     methods: {
