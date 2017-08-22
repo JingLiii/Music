@@ -77,6 +77,14 @@ export default {
     scrollY (newY) {
       // 对比scrollY对LishtHeight对比, 判断落在了第几个区间
       const listHeight = this.listHeight
+
+      // 当滚动到顶部的时候
+      if (newY > 0) {
+        this.currentIndex = 0
+        return
+      }
+
+      // 在中间部分滚动
       for (let i = 0; i < listHeight.length; i++) {
         let height1 = listHeight[i]
         let height2 = listHeight[i + 1]
@@ -89,7 +97,9 @@ export default {
           return
         }
       }
-      this.currentIndex = 0
+
+      // 当滚动到底部, 且-newY大于最后一个元素的上线
+      this.currentIndex = listHeight.length - 2
     }
   },
   props: {
