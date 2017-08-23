@@ -58,7 +58,7 @@ export default {
     return {
       // 在Y轴滚动的位置
       // 为什么要是-1. 不是0
-      scrollY: -1,
+      scrollY: 0,
       // 观察当前滚动到第几个了
       currentIndex: 0
     }
@@ -76,22 +76,20 @@ export default {
     // 检测, 我们的Y轴有没有滚动
     scrollY (newY) {
       // 对比scrollY对LishtHeight对比, 判断落在了第几个区间
-      const listHeight = this.listHeight
-
+      var listHeight = this.listHeight
       // 当滚动到顶部的时候
       if (newY > 0) {
         this.currentIndex = 0
         return
       }
-
       // 在中间部分滚动
-      for (let i = 0; i < listHeight.length; i++) {
+      for (let i = 0; i < listHeight.length - 1; i++) {
         let height1 = listHeight[i]
         let height2 = listHeight[i + 1]
         // 如果最后一个数不见了,
         // 或者移动的时候, 落在了某个范围内
         // 我感觉这是 最神奇的一行代码了
-        if (!height2 || (-newY > height1 && -newY < height2)) {
+        if (-newY >= height1 && -newY < height2) {
           // 就根据这个范围的i, 选择谁来特殊标记
           this.currentIndex = i
           return
@@ -164,6 +162,20 @@ export default {
     },
     // 移动到指定位置
     _scrollTo(index) {
+      // 这样的判断是因为点击了两端的空白区块
+      if (index === null) {
+        return
+      }
+      // 处理边界值
+      if (index < 0) { // 如果index小于0, 那就是证明在无限向上滑动, 保持为0即可
+        index = 0
+      } else if (index > this.listHeight.length - 2) { // 如果超过了最大限制, 那就证明在无限向下走, 变为最大值即可.
+        index = this.listHeight.length - 2
+      }
+      // 移动到指定位置后呢, 获取到一个上限的位置, 那这个位置, 就是应该高亮的地方
+      this.scrollY = -this.listHeight[index]
+
+      // 让左边的列表移动到指定的位置
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
     },
     // 计算group中的每个组的高度
