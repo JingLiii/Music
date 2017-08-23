@@ -1,7 +1,9 @@
 <template>
-  <div class="singer-detail">
-    歌手详情页面
-  </div>
+  <transition name="slide">
+    <div class="singer-detail">
+      歌手详情页面
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -20,5 +22,10 @@ export default {
   bottom 0
   z-index 100
   background-color $color-background
+  
+.slide-enter-active, .slide-leave-active
+  transition all 0.3s
+.slide-enter, .slide-leave-to
+  transform translate3d(100%, 0, 0)
 </style>
 
