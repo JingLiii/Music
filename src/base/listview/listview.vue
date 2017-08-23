@@ -43,6 +43,12 @@
         </li>
       </ul>
     </div>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <h1 class="fixed-title">{{fixedTitle}}</h1>
+    </div>
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading> 
+    </div>
   </scroll>
 </template>
 
@@ -50,17 +56,23 @@
 // 现在我们的这个scroll组件是可以直接嵌套的, 嵌套后自己在其中直接形成一个滚动的空间
 import Scroll from 'base/scroll/scroll'
 import {getData} from 'common/js/dom'
+import Loading from 'base/loading/loading'
 
 // 定义每一个锚点的高度
 const ANCHOR_HEIGHT = 18
+// 定义固定标题的高度
+const TITLE_HEIGHT = 30
+
 export default {
   data () {
     return {
       // 在Y轴滚动的位置
       // 为什么要是-1. 不是0
-      scrollY: 0,
+      scrollY: -1,
       // 观察当前滚动到第几个了
-      currentIndex: 0
+      currentIndex: 0,
+      // 添加标志位: 表示这个区块的上限和 我们固定的这个位置的一个滚动差
+      diff: -1
     }
   },
   watch: {
@@ -92,12 +104,33 @@ export default {
         if (-newY >= height1 && -newY < height2) {
           // 就根据这个范围的i, 选择谁来特殊标记
           this.currentIndex = i
+          // 求出当前的一个diff的变化
+          // height2 是当前的一个上限
+          // 减掉滚动的距离
+          // 就是这区块的底边, 距离顶部的一个距离
+          this.diff = height2 + newY
           return
         }
       }
 
       // 当滚动到底部, 且-newY大于最后一个元素的上线
       this.currentIndex = listHeight.length - 2
+    },
+    // 监听diff的一个变化
+    diff(newVal) {
+      // 计算:
+      // 如果固定的顶部距离, 大于0, 并且, 已经缩短到了title的高度之内, 就计算出当前应该是多少的固定高度
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      // diff 随时变换的过程
+      // 这里是一个dom优化, 就是当我们在一个group内的时候, 完全不需要修改
+      // 也就是 还没有重新计算fixedTop, 他们都还是0
+      if (this.fixedTop === fixedTop) {
+        return
+      }
+      this.fixedTop = fixedTop
+
+      // 进行dom操作
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
     }
   },
   props: {
@@ -107,7 +140,8 @@ export default {
     }
   },
   components: {
-    Scroll
+    Scroll,
+    Loading
   },
   // 通过计算属性, 根据data中每一项中的title, 形成一个计算属性, 获取右侧关键字列表
   computed: {
@@ -116,6 +150,13 @@ export default {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    },
+    // 根据当前的一个currentIndex进行判断, 我们滚动到了哪一个group的区间位置
+    fixedTitle() {
+      if (this.scrollY > 0) { // 如果在最上面的话, 就不必再显示, 这是一个边界值的问题
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : null
     }
   },
   created () {
@@ -246,6 +287,18 @@ export default {
       font-size $font-size-small
       &.current
         color $color-theme
+  .list-fixed
+    position absolute
+    top 0
+    left 0
+    width 100%
+    .fixed-title
+      height 30px
+      line-height 30px
+      padding-left 20px
+      font-size $font-size-small
+      color $color-text-l
+      background-color $color-highlight-background
   .loading-container
     position absolute
     width 100%
