@@ -10,11 +10,21 @@
     <!-- 歌手左列表 -->
     <!-- 整个外层的一个嵌套, 例如热门是一块, a是一块 -->
     <ul>
-      <li v-for="group in data" :key="group.title" class="list-group" ref="listGroup">
+      <li 
+        v-for="group in data" 
+        :key="group.title" 
+        class="list-group" 
+        ref="listGroup"
+      >
         <h2 class="list-group-title">{{group.title}}</h2>
-        <!-- 里面的一块: 例如热面下面有哪些数据, a下面有哪些数据 -->
+        <!-- 里面的一块: 例如热门下面有哪些数据, a下面有哪些数据 -->
         <ul>
-          <li v-for="item in group.items" :key="item.id" class="list-group-item">
+          <li 
+            v-for="item in group.items" 
+            :key="item.id" 
+            class="list-group-item"
+            @click="selectItem(item)"
+          >
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
           </li>
@@ -168,6 +178,10 @@ export default {
     this.listHeight = []
   },
   methods: {
+    selectItem(item) {
+      // 向外面派发一个select方法, 获得点击的item
+      this.$emit('select', item)
+    },
     // 鼠标已经点击的效果
     onShortcutTouchStart(event) {
       // 拿到我们滑动到了第几个元素的索引值

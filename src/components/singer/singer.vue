@@ -1,6 +1,7 @@
 <template>
   <div class="singer">
-     <list-view :data="singers"></list-view> 
+     <list-view @select="selectSinger" :data="singers"></list-view>
+     <router-view></router-view>
   </div>
 </template>
 
@@ -25,6 +26,11 @@ export default {
     this._getSingerList()
   },
   methods: {
+    selectSinger(singer) {
+      this.$router.push({
+        path: `/singer/${singer.id}`
+      })
+    },
     // 获取歌手数据
     _getSingerList() {
       getSingerList().then((res) => {
