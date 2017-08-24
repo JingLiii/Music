@@ -5,6 +5,7 @@ import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import VueLazyLoad from 'vue-lazyload'
 
 // 去掉300毫秒的延时
@@ -22,5 +23,6 @@ import 'common/stylus/index.stylus'
 new Vue({
   el: '#app',
   render: h => h(App),
+  store,
   router
 })
