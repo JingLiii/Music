@@ -57,9 +57,8 @@ export default {
         // 查看是否在这个数组的前面, 如果小于热门歌手的长度, 就添加到热门歌手数组
         if (index < HOT_SINGER_LINGTH) {
           map.hot.items.push(new Singer({
-            id: item.Fsinger_id,
-            name: item.Fsinger_name,
-            mid: item.Fsinger_mid
+            id: item.Fsinger_mid,
+            name: item.Fsinger_name
           }))
         }
 
@@ -76,9 +75,8 @@ export default {
         }
         // 再然后把这个歌手放进去
         map[key].items.push(new Singer({
-          id: item.Fsinger_id,
-          name: item.Fsinger_name,
-          mid: item.Fsinger_mid
+          id: item.Fsinger_mid,
+          name: item.Fsinger_name
         }))
       })
 
