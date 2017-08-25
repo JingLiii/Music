@@ -1,7 +1,6 @@
 <template>
   <transition name="slide">
-    <h1>zheshi geshoxiangq</h1>
-    <!-- <music-list :songs="songs" ></music-list> -->
+    <music-list :songs="songs" class="singer-detail"></music-list>
   </transition>
 </template>
 
