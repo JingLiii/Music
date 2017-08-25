@@ -1,6 +1,6 @@
 <template>
   <transition name="slide">
-    <music-list :songs="songs" class="singer-detail"></music-list>
+    <music-list :title="title" :bg-image="bgImage" :songs="songs" class="singer-detail"></music-list>
   </transition>
 </template>
 
@@ -23,7 +23,7 @@ export default {
       return this.singer.name
     },
     bgImage() {
-      return this.singer.avater
+      return this.singer.avatar
     },
     ...mapGetters([
       'singer'
@@ -45,9 +45,7 @@ export default {
       }
       getSingerDetail(this.singer.id).then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res.data.list)
           this.songs = this._normalizeSongs(res.data.list)
-          console.log(this.songs)
         }
       })
     },
