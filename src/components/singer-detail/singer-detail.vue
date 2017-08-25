@@ -1,8 +1,7 @@
 <template>
   <transition name="slide">
-    <div class="singer-detail">
-      歌手详情页面
-    </div>
+    <h1>zheshi geshoxiangq</h1>
+    <!-- <music-list :songs="songs" ></music-list> -->
   </transition>
 </template>
 
@@ -11,6 +10,7 @@ import {mapGetters} from 'vuex'
 import {getSingerDetail} from 'api/singer'
 import {ERR_OK} from 'api/config'
 import {createSong} from 'common/js/song'
+import MusicList from 'components/music-list/music-list'
 export default {
   data () {
     return {
@@ -19,6 +19,13 @@ export default {
     }
   },
   computed: {
+    // 通过计算属性来取值.
+    title() {
+      return this.singer.name
+    },
+    bgImage() {
+      return this.singer.avater
+    },
     ...mapGetters([
       'singer'
     ])
@@ -59,6 +66,9 @@ export default {
       }, this)
       return arr
     }
+  },
+  components: {
+    MusicList
   }
 }
 </script>
