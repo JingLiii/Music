@@ -77,9 +77,20 @@
         let translateY = Math.max(this.minTranslateY, newY)
         // 设置变量, 用来控制层级关系的遮挡问题
         let zIndex = 0
+        // 定义scale, 实现图片的放大与缩小
+        let scale = 1
 
         this.$refs.layer.style[`transform`] = `translate3d(0, ${translateY}px, 0)`
         this.$refs.layer.style[`webkitTransform`] = `translate3d(0, ${translateY}px, 0)`
+
+        // 定义图片放大缩小的比例
+        const percent = Math.abs(newY / this.imageHeight)
+
+        // 判断是否处于向下拉的状态
+        if (newY > 0) {
+          scale = 1 + percent
+          zIndex = 10
+        }
 
         // 滚动起来起来之后, 当我们滚动到特定位置的时候, 也就是滚动位置, 小于了我们能够滚动的最小位置的时候
         if (newY < this.minTranslateY) {
@@ -95,6 +106,9 @@
           this.$refs.bgImage.style.height = `0`
         }
         this.$refs.bgImage.style.zIndex = zIndex
+
+        this.$refs.bgImage.style[`transform`] = `scale(${scale})`
+        this.$refs.bgImage.style[`webkitTransform`] = `scale(${scale})`
       }
     },
     // 创建整个Dom的时候
