@@ -75,8 +75,26 @@
       scrollY(newY) {
         // 无论我们如何拖动bg-layer始终都在那, max可以计算出来具体的偏移量
         let translateY = Math.max(this.minTranslateY, newY)
+        // 设置变量, 用来控制层级关系的遮挡问题
+        let zIndex = 0
+
         this.$refs.layer.style[`transform`] = `translate3d(0, ${translateY}px, 0)`
         this.$refs.layer.style[`webkitTransform`] = `translate3d(0, ${translateY}px, 0)`
+
+        // 滚动起来起来之后, 当我们滚动到特定位置的时候, 也就是滚动位置, 小于了我们能够滚动的最小位置的时候
+        if (newY < this.minTranslateY) {
+          // 把图片的层级提上来
+          zIndex = 10
+          // 距离顶部的距离为0
+          this.$refs.bgImage.style.paddingTop = 0
+          // 给图片设置一个高度, 就是我们固定在上面的高度
+          this.$refs.bgImage.style.height = `${RESERVEL_HEIGHT}px`
+        } else {
+          // 现在的情况是在恢复之前的状态, 那就都还原回来
+          this.$refs.bgImage.style.paddingTop = `70%`
+          this.$refs.bgImage.style.height = `0`
+        }
+        this.$refs.bgImage.style.zIndex = zIndex
       }
     },
     // 创建整个Dom的时候
