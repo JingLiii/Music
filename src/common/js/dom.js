@@ -31,3 +31,44 @@ export function getData(element, name, val) {
     return element.getAttribute(name)
   }
 }
+
+// 封装一个自动添加样式前缀的函数
+// 创建一个元素, 并获取整个元素的样式
+let elementStyle = document.createElement('div').style
+
+// 获取整个浏览器厂商的名称
+let vendor = (() => {
+  // 定义了所有的transform的属性名称
+  let transformNames = {
+    webkit: 'webkitTransform',
+    Moz: 'MozTransform',
+    O: 'OTransform',
+    ms: 'msTransform',
+    standard: 'transform'
+  }
+
+  // 遍历这个对象
+  for (let key in transformNames) {
+    if (elementStyle[transformNames[key]] !== undefined) {
+      return key
+    }
+  }
+
+  // 所有的都不支持
+  return false
+})()
+
+// 暴露接口函数
+// 传入一个样式, 返回一个带有前缀的样式
+export function prefixStyle(style) {
+  // 找到尝试, 那一定是浏览器有问题
+  if (vendor === false) {
+    return false
+  }
+  // 标准模式, 就是他了
+  if (vendor === 'standard') {
+    return style
+  }
+
+  return vendor + style.charAt(0).toUpperCase() + style.substr(1)
+}

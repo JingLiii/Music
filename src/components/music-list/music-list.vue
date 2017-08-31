@@ -22,9 +22,12 @@
 <script>
   import Scroll from 'base/scroll/scroll'
   import SongList from 'base/song-list/song-list'
+  import {prefixStyle} from 'common/js/dom'
 
   // 预留的一个常量, 具体顶部保留的一个距离
   const RESERVEL_HEIGHT = 40
+  const transform = prefixStyle('transform')
+  const backdrop = prefixStyle('backdrop-filter')
 
   export default {
     // 组件
@@ -82,8 +85,7 @@
         // 定义blur, 控制图片的模糊程度
         let blur = 0
 
-        this.$refs.layer.style[`transform`] = `translate3d(0, ${translateY}px, 0)`
-        this.$refs.layer.style[`webkitTransform`] = `translate3d(0, ${translateY}px, 0)`
+        this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
 
         // 定义图片放大缩小的比例
         const percent = Math.abs(newY / this.imageHeight)
@@ -96,8 +98,7 @@
           blur = Math.max(20 * percent, 20)
         }
 
-        this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
-        this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
+        this.$refs.filter.style[backdrop] = `blur(${blur}px)`
         // 滚动起来起来之后, 当我们滚动到特定位置的时候, 也就是滚动位置, 小于了我们能够滚动的最小位置的时候
         if (newY < this.minTranslateY) {
           // 把图片的层级提上来
@@ -113,8 +114,7 @@
         }
         this.$refs.bgImage.style.zIndex = zIndex
 
-        this.$refs.bgImage.style[`transform`] = `scale(${scale})`
-        this.$refs.bgImage.style[`webkitTransform`] = `scale(${scale})`
+        this.$refs.bgImage.style[transform] = `scale(${scale})`
       }
     },
     // 创建整个Dom的时候
