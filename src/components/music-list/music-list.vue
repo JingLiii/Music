@@ -1,11 +1,17 @@
 <template>
   <div class="music-list">
-    <div class="back">
+    <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
     <!-- 因为其中有html的转义字符 -->
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="play-wrapper">
+        <div class="play" v-show="songs.length>0" ref="playBtn">
+          <i class="icon-play"></i>
+          <span class="text">随机播放</span>
+        </div>
+      </div>
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
@@ -15,6 +21,9 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
+      <div class="loading-container" v-show="!songs.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -22,6 +31,8 @@
 <script>
   import Scroll from 'base/scroll/scroll'
   import SongList from 'base/song-list/song-list'
+  import Loading from 'base/loading/loading'
+
   import {prefixStyle} from 'common/js/dom'
 
   // 预留的一个常量, 具体顶部保留的一个距离
@@ -33,7 +44,8 @@
     // 组件
     components: {
       Scroll,
-      SongList
+      SongList,
+      Loading
     },
     // 传进来的属性
     props: {
@@ -71,6 +83,9 @@
       scroll(pos) {
         // 实时监听并更改scrollY的值
         this.scrollY = pos.y
+      },
+      back() {
+        this.$router.back()
       }
     },
     watch: {
@@ -107,10 +122,14 @@
           this.$refs.bgImage.style.paddingTop = 0
           // 给图片设置一个高度, 就是我们固定在上面的高度
           this.$refs.bgImage.style.height = `${RESERVEL_HEIGHT}px`
+
+          // 让那个定位的按钮消失
+          this.$refs.playBtn.style.display = 'none'
         } else {
           // 现在的情况是在恢复之前的状态, 那就都还原回来
           this.$refs.bgImage.style.paddingTop = `70%`
           this.$refs.bgImage.style.height = `0`
+          this.$refs.playBtn.style.display = 'block'
         }
         this.$refs.bgImage.style.zIndex = zIndex
 
