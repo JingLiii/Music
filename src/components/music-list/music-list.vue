@@ -6,7 +6,7 @@
     <!-- 因为其中有html的转义字符 -->
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="filter"></div>
+      <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <!-- 实时监听scroll的位置 -->
@@ -79,6 +79,8 @@
         let zIndex = 0
         // 定义scale, 实现图片的放大与缩小
         let scale = 1
+        // 定义blur, 控制图片的模糊程度
+        let blur = 0
 
         this.$refs.layer.style[`transform`] = `translate3d(0, ${translateY}px, 0)`
         this.$refs.layer.style[`webkitTransform`] = `translate3d(0, ${translateY}px, 0)`
@@ -90,8 +92,12 @@
         if (newY > 0) {
           scale = 1 + percent
           zIndex = 10
+        } else { // 此时应该是向上滑动
+          blur = Math.max(20 * percent, 20)
         }
 
+        this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
+        this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
         // 滚动起来起来之后, 当我们滚动到特定位置的时候, 也就是滚动位置, 小于了我们能够滚动的最小位置的时候
         if (newY < this.minTranslateY) {
           // 把图片的层级提上来
