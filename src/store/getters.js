@@ -15,6 +15,6 @@ export const currentIndex = state => state.currentIndex
 // 通过计算获得当前播放的哪一首歌
 export const currentSong = (state) => {
   // 如果没有的话, 就返回一个空对象
-  return state.playing[state.currentIndex] || {}
+  return state.playlist[state.currentIndex] || {}
 }
 

@@ -4,6 +4,7 @@
 import * as types from './mutation-types'
 
 // 这里面就是一个方法, 里面就是一些相关的修改方法
+// mytations, 本身就是一个函数
 const matutaions = {
   // [方法名](参数)
   [types.SET_SINGER](state, singer) {

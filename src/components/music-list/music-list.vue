@@ -19,7 +19,7 @@
     <scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs" class="list" ref="list">
       <!-- 套一层, 为了控制内部的样式 -->
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list @select="selectItem" :songs="songs"></song-list>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -34,6 +34,9 @@
   import Loading from 'base/loading/loading'
 
   import {prefixStyle} from 'common/js/dom'
+
+  // 来调用起来anctions
+  import {mapActions} from 'vuex'
 
   // 预留的一个常量, 具体顶部保留的一个距离
   const RESERVEL_HEIGHT = 40
@@ -86,7 +89,23 @@
       },
       back() {
         this.$router.back()
-      }
+      },
+      // 监听到了选择的哪一首歌
+      selectItem(item, index) {
+        // 更改actions中的状态.刷新全局
+        this.selectPlay({
+          // 把整个歌单传入
+          list: this.songs,
+          // 如果状态相互对应的话, 就直接写了
+          // 还是不能理解, 对象的这种写法.
+          // ES6的写法, 相当于: index: index
+          index
+        })
+      },
+      // 用来获取actions中暴露出的方法
+      ...mapActions([
+        'selectPlay'
+      ])
     },
     watch: {
       // 然后根据scrollY的值, 设置一个bg-layer的一个偏移量

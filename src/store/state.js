@@ -10,7 +10,7 @@ const state = {
   // 播放器的展开和收起
   fullScreen: false,
   // 播放的列表
-  playList: [],
+  playlist: [],
   // 顺序列表
   sequenceList: [],
   // 播放模式

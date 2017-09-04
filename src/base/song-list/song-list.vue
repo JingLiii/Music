@@ -1,7 +1,8 @@
 <template>
   <div class="song-list">
     <ul>
-      <li v-for="song in songs" class="item":key="song.name">
+      <!-- 不仅要找到点击的这首歌, 还是找到点击的第几首歌, 这样的话, 下一次播放的时候, 才能从这里开始 -->
+      <li @click="selectItem(song, index)" v-for="(song, index) in songs" class="item":key="song.name">
         <div class="content">
           <h2 class="name">{{song.name}}</h2>
           <p class="desc">{{getDesc(song)}}</p>
@@ -20,6 +21,10 @@ export default {
     }
   },
   methods: {
+    // 点击选择了歌曲列表的某一项
+    selectItem(item, index) {
+      this.$emit('select', item, index)
+    },
     // 函数和filter是一样的, 都是一样的, 读取返回这
     getDesc(song) {
       return `${song.singer} 。${song.album}`
