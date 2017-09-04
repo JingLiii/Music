@@ -2,26 +2,91 @@
   <div class="player" v-show="playlist.length>0">
     <!-- 这是一个具体的播放器 -->
     <div class="normal-player" v-show="fullScreen">
-      播放器
+      <div class="background">
+        <img width="100%" height="100%" :src="currentSong.image" alt="">
+      </div>
+      <!-- 顶部是一些信息 -->
+      <div class="top">
+        <div class="back" @click="back">
+          <i class="icon-back"></i>
+        </div>
+        <h1 class="title" v-html="currentSong.name"></h1>
+        <h2 class="subtitle" v-html="currentSong.singer"></h2>
+      </div>
+      <!-- 唱片滚动地方 -->
+      <div class="middle">
+        <div class="middle-l">
+          <div class="cd-wrapper">
+            <div class="cd">
+              <img :src="currentSong.image" alt="" class="image">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 顶部的操作区 -->
+      <div class="bottom">
+        <div class="operators">
+          <div class="icon i-left">
+            <i class="icon-sequence"></i>
+          </div>
+          <div class="icon i-left">
+            <i class="icon-prev"></i>
+          </div>
+          <div class="icon i-center">
+            <i class="icon-play "></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-next"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon icon-not-favorite"></i>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- 这是一个收起后的播放器 -->
-    <div class="mini-player" v-show="!fullScreen"></div>
+    <div class="mini-player" v-show="!fullScreen" @click="open">
+      <div class="icon">
+        <img width="40" height="40" :src="currentSong.image" alt="">
+      </div>
+      <div class="text">
+        <h2 class="name" v-html="currentSong.name"></h2>
+        <p class="desc" v-html="currentSong.singer"></p>
+      </div>
+      <div class="control"></div>
+      <div class="control">
+        <i class="icon-playlist"></i>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// 引入vuex的一些状态
-// mapGetters是一个数组, 其中包含了我们想要的数据, 在计算属性中得到
-import {mapGetters} from 'vuex'
-export default {
-  computed: {
-    // 在计算属性中, 从vuex中取出想要的数据
-    ...mapGetters([
-      'fullScreen',
-      'playlist'
-    ])
+  // 引入vuex的一些状态
+  // mapGetters是一个数组, 其中包含了我们想要的数据, 在计算属性中得到
+  import {mapGetters, mapMutations} from 'vuex'
+  export default {
+    methods: {
+      // 将播放器缩小
+      back() {
+        this.setFullScreen(false)
+      },
+      open() {
+        this.setFullScreen(true)
+      },
+      ...mapMutations({
+        setFullScreen: 'SET_FULL_SCREEN'
+      })
+    },
+    computed: {
+      // 在计算属性中, 从vuex中取出想要的数据
+      ...mapGetters([
+        'fullScreen',
+        'playlist',
+        'currentSong'
+      ])
+    }
   }
-}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
