@@ -1,7 +1,12 @@
 <template>
   <div class="player" v-show="playlist.length>0">
     <!-- 这是一个具体的播放器 -->
-    <transition name="normal">
+    <transition name="normal"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @leave="leave"
+                @after-leave="alterLeave"
+    >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image" alt="">
@@ -17,7 +22,7 @@
         <!-- 唱片滚动地方 -->
         <div class="middle">
           <div class="middle-l">
-            <div class="cd-wrapper">
+            <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
@@ -69,6 +74,8 @@
   // 引入vuex的一些状态
   // mapGetters是一个数组, 其中包含了我们想要的数据, 在计算属性中得到
   import {mapGetters, mapMutations} from 'vuex'
+  import animations from 'create-keyframe-animation'
+
   export default {
     methods: {
       // 将播放器缩小
@@ -77,6 +84,83 @@
       },
       open() {
         this.setFullScreen(true)
+      },
+      // 这是Vue为我们提供的一个js方法, 可以实现动画效果
+      enter(element, done) {
+        // 有两个参数, 第一个是执行的dom元素
+        // 第二个一个执行完成的函数 done执行完成后, 就执行到下一个函数afterEnter中
+        // 获得, 需要偏移的量, 和我们需要变化的一个倍数
+        const {x, y, scale} = this._getPosAndScale()
+        // 创建动画
+        let animation = {
+          0: {
+            transform: `translate3d(${x}px, ${y}px), scale(${scale})`
+          },
+          60: {
+            transform: `translate3d(0, 0, 0), scale(1.1)`
+          },
+          100: {
+            transform: `translate3d(0, 0, 0), scale(1.0)`
+          }
+        }
+
+        // 初始化动画, 注册动画
+        animations.registerAnimation({
+          // 动画的名称
+          name: 'move',
+          // 动画的具体实现
+          animation,
+          // 动画的一些参数
+          presets: {
+            // 执行的时间
+            duration: 1000,
+            easing: 'linear'
+          }
+        })
+        // 执行这个动画
+        // done 是一个回调函数, 执行完了, 就会调用这个函数
+        console.log(this.$refs.cdWrapper)
+        animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+      },
+      afterEnter() {
+        // // 执行完成之后, 就要取消注册的动画
+        // animations.unregisterAnimation('move')
+        // // 然后将这个DOM元素的动画置为空
+        // this.$refs.cdWrapper.style.animation = ''
+      },
+      leave() {
+
+      },
+      alterLeave() {
+
+      },
+      // 获取位置和需要偏移的量
+      _getPosAndScale() {
+        // 小圆的一个宽度
+        const targetWidth = 40
+        // 距离左边的一个距离
+        const paddingLeft = 40
+        // 距离底部的高度
+        const paddingBottom = 30
+        // 大圆容器距离顶部的距离
+        const paddingTop = 80
+        // 大圆的宽度: 根据屏幕的宽度计算得来
+        const width = window.innerWidth * 0.8
+        // 初始的缩放比例
+        const scale = targetWidth / width
+
+        // 我们本来是在大圆的中心点, 然后通过这个x, y的一个偏移位置, 移动到下面的这个小圆上
+        // 再从这个小圆上移动过去
+        // x逐渐往左偏移, 需要偏移一个负值
+        const x = -(window.innerWidth / 2 - paddingLeft)
+        // y的值是逐渐向下走的, 固然是一个正直
+        const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+
+        return {
+          x,
+          y,
+          scale
+        }
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN'
