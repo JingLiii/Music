@@ -67,7 +67,8 @@
         </div>
       </div>
     </transition>
-    <!-- 使用auto来播放音乐 -->
+    <!-- 使用audio来播放音乐 -->
+    <audio :src="currentSong.url" ref="audio"></audio>
   </div>
 </template>
 
@@ -189,6 +190,16 @@
         'playlist',
         'currentSong'
       ])
+    },
+    watch: {
+      // 获取当前歌曲的变化, 变化就开始播放
+      currentSong() {
+        // dom还没有准备好, 是没有办法播放的
+        // $nextTick在修改数据之后立即使用它, 然后等待DOM更新, 把回调函数延迟到下次DOM更新循环之后.
+        this.$nextTick(() => {
+          this.$refs.audio.play()
+        })
+      }
     }
   }
 </script>
