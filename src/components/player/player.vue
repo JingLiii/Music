@@ -23,7 +23,7 @@
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd" :class="cdCls">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
@@ -39,7 +39,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i @click="togglePlaying" class="icon-play "></i>
+              <i @click="togglePlaying" :class="playIcon"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -55,13 +55,16 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
-          <img width="40" height="40" :src="currentSong.image" alt="">
+          <img width="40" height="40" :src="currentSong.image" :class="cdCls" alt="">
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
-        <div class="control"></div>
+        <div class="control">
+          <!-- 因为父元素, 也有一个点击事件, 是会冒泡上去的, 所以使用的阻止冒泡的方法 -->
+          <i @click.stop="togglePlaying" :class="miniIcon"></i>
+        </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
@@ -191,6 +194,17 @@
       })
     },
     computed: {
+      // 根据playing的状态来确定显示的图标
+      playIcon() {
+        return this.playing ? 'icon-pause' : 'icon-play'
+      },
+      miniIcon() {
+        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+      },
+      cdCls() {
+        // 现在cd这个界面的旋转 和 暂停
+        return this.playing ? 'play' : 'play pause'
+      },
       // 在计算属性中, 从vuex中取出想要的数据
       ...mapGetters([
         'fullScreen',
