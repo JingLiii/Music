@@ -91,16 +91,17 @@
         // 第二个一个执行完成的函数 done执行完成后, 就执行到下一个函数afterEnter中
         // 获得, 需要偏移的量, 和我们需要变化的一个倍数
         const {x, y, scale} = this._getPosAndScale()
+
         // 创建动画
         let animation = {
           0: {
-            transform: `translate3d(${x}px, ${y}px), scale(${scale})`
+            transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
           },
           60: {
-            transform: `translate3d(0, 0, 0), scale(1.1)`
+            transform: `translate3d(0, 0, 0) scale(1.5)`
           },
           100: {
-            transform: `translate3d(0, 0, 0), scale(1.0)`
+            transform: `translate3d(0, 0, 0) scale(1)`
           }
         }
 
@@ -113,13 +114,12 @@
           // 动画的一些参数
           presets: {
             // 执行的时间
-            duration: 1000,
+            duration: 400,
             easing: 'linear'
           }
         })
         // 执行这个动画
         // done 是一个回调函数, 执行完了, 就会调用这个函数
-        console.log(this.$refs.cdWrapper)
         animations.runAnimation(this.$refs.cdWrapper, 'move', done)
       },
       afterEnter() {
