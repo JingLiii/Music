@@ -67,6 +67,7 @@
         </div>
       </div>
     </transition>
+    <!-- 使用auto来播放音乐 -->
   </div>
 </template>
 
@@ -75,6 +76,10 @@
   // mapGetters是一个数组, 其中包含了我们想要的数据, 在计算属性中得到
   import {mapGetters, mapMutations} from 'vuex'
   import animations from 'create-keyframe-animation'
+
+  // 添加前缀
+  import {prefixStyle} from 'common/js/dom'
+  const transform = prefixStyle('transform')
 
   export default {
     methods: {
@@ -114,7 +119,7 @@
           // 动画的一些参数
           presets: {
             // 执行的时间
-            duration: 400,
+            duration: 300,
             easing: 'linear'
           }
         })
@@ -123,16 +128,27 @@
         animations.runAnimation(this.$refs.cdWrapper, 'move', done)
       },
       afterEnter() {
-        // // 执行完成之后, 就要取消注册的动画
-        // animations.unregisterAnimation('move')
-        // // 然后将这个DOM元素的动画置为空
-        // this.$refs.cdWrapper.style.animation = ''
+        // 执行完成之后, 就要取消注册的动画
+        animations.unregisterAnimation('move')
+        // 然后将这个DOM元素的动画置为空
+        this.$refs.cdWrapper.style.animation = ''
       },
-      leave() {
-
+      // 关闭的时候
+      leave(element, done) {
+        // 直接通过JS的方法, 添加CSS样式
+        this.$refs.cdWrapper.style.transition = 'all 0.4s'
+        // 获取位置
+        const {x, y, scale} = this._getPosAndScale()
+        // 然后给我们的dom元素添加这个样式
+        this.$refs.cdWrapper.style[transform] = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+        // 动画完成的时候, 执行回调函数, 用来表示这个动画执行完了
+        // 监听动画完成事件
+        this.$refs.cdWrapper.addEventListener('transitionend', done)
       },
       alterLeave() {
-
+        // 清掉我们设置的动画样式
+        this.$refs.cdWrapper.style.transition = ''
+        this.$refs.cdWrapper.style.transform = ''
       },
       // 获取位置和需要偏移的量
       _getPosAndScale() {
