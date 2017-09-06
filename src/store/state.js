@@ -6,7 +6,7 @@ const state = {
   // 需要展示的歌手信息
   singer: {},
   // 播放器的播放状态
-  palying: false,
+  playing: false,
   // 播放器的展开和收起
   fullScreen: false,
   // 播放的列表

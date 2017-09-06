@@ -39,7 +39,7 @@
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play "></i>
+              <i @click="togglePlaying" class="icon-play "></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
@@ -151,6 +151,12 @@
         this.$refs.cdWrapper.style.transition = ''
         this.$refs.cdWrapper.style.transform = ''
       },
+      // 暂停或者播放歌曲
+      togglePlaying() {
+        // 在Vuex中有一个playing状态
+        // 当我们点击的时候, 更改vuex中的状态
+        this.setPlayingSate(!this.playing)
+      },
       // 获取位置和需要偏移的量
       _getPosAndScale() {
         // 小圆的一个宽度
@@ -180,7 +186,8 @@
         }
       },
       ...mapMutations({
-        setFullScreen: 'SET_FULL_SCREEN'
+        setFullScreen: 'SET_FULL_SCREEN',
+        setPlayingSate: 'SET_PLAYING_STATE'
       })
     },
     computed: {
@@ -188,7 +195,8 @@
       ...mapGetters([
         'fullScreen',
         'playlist',
-        'currentSong'
+        'currentSong',
+        'playing'
       ])
     },
     watch: {
@@ -198,6 +206,15 @@
         // $nextTick在修改数据之后立即使用它, 然后等待DOM更新, 把回调函数延迟到下次DOM更新循环之后.
         this.$nextTick(() => {
           this.$refs.audio.play()
+        })
+      },
+      // 我们开始不断观察playging的变化
+      playing(newPlayging) {
+        const audio = this.$refs.audio
+        // 检测变化
+        this.$nextTick(() => {
+          // 根据新值的变化, 来决定是播放, 还是暂停
+          newPlayging ? audio.play() : audio.pause()
         })
       }
     }
