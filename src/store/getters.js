@@ -13,8 +13,8 @@ export const currentIndex = state => state.currentIndex
 
 // getter也可以进行计算属性
 // 通过计算获得当前播放的哪一首歌
+// 当我们改变索引的时候, 这里的currentSong也会跟着改变, 这时候, 页面上的所有数据都会改变
 export const currentSong = (state) => {
   // 如果没有的话, 就返回一个空对象
   return state.playlist[state.currentIndex] || {}
 }
-

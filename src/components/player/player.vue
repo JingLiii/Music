@@ -36,13 +36,13 @@
               <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
-              <i class="icon-prev"></i>
+              <i @click="prev" class="icon-prev"></i>
             </div>
             <div class="icon i-center">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon-next"></i>
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -160,6 +160,33 @@
         // 当我们点击的时候, 更改vuex中的状态
         this.setPlayingSate(!this.playing)
       },
+      // 播放下一首歌
+      next() {
+        // 算出下一首歌的索引值
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) { // 此时播放到了最后一首歌, 就让索引为0
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        // 如果是暂停状态, 就是改下playing的状态,
+        // 切到下一首歌, 一定是播放状态, 如果我们从播放状态切过去没问题,
+        // 如果我们从暂停状态切过去的话, 因为icon的变化, 依赖我们的点击, 现在我们没有点击,
+        // 当然还是在一个暂停的状态
+        // 意思就是我们的歌曲被切换了, 但是我们的playing的状态还是没有改变
+        if (!this.playing) { // 如果是一个暂停的状态调用的话, 就改变一下playing的状态, 反正切到下首歌, 也是个播放状态
+          this.togglePlaying()
+        }
+      },
+      prev() {
+        let index = this.currentIndex - 1
+        if (index === -1) { // 第一首歌, 再减就是 -1 了
+          index = this.playlist.length - 1
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
+      },
       // 获取位置和需要偏移的量
       _getPosAndScale() {
         // 小圆的一个宽度
@@ -190,7 +217,8 @@
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingSate: 'SET_PLAYING_STATE'
+        setPlayingSate: 'SET_PLAYING_STATE',
+        setCurrentIndex: 'SET_CURRENT_INDEX'
       })
     },
     computed: {
@@ -210,7 +238,8 @@
         'fullScreen',
         'playlist',
         'currentSong',
-        'playing'
+        'playing',
+        'currentIndex'
       ])
     },
     watch: {
