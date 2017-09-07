@@ -34,7 +34,9 @@
           <!-- 歌曲播放时间 -->
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
-            <div class="progress-bar-wrapper"></div>
+            <div class="progress-bar-wrapper">
+              <progress-bar></progress-bar>
+            </div>
             <span class="time time-r"> {{format(currentSong.duration)}}</span>
           </div>
           <!-- 歌曲操作按钮 -->
@@ -101,6 +103,9 @@
   // 添加前缀
   import {prefixStyle} from 'common/js/dom'
   const transform = prefixStyle('transform')
+
+  // 引入进度条组件
+  import ProgressBar from 'base/progress-bar/progress-bar'
 
   export default {
     data () {
@@ -334,6 +339,9 @@
           newPlayging ? audio.play() : audio.pause()
         })
       }
+    },
+    components: {
+      ProgressBar
     }
   }
 </script>
