@@ -71,7 +71,8 @@
       </div>
     </transition>
     <!-- 使用audio来播放音乐 -->
-    <audio :src="currentSong.url" ref="audio"></audio>
+    <!-- 当歌曲可以播放的时候, 会派发一个canplay事件 ; 发生错误, 请求不到数据的时候, 会派发一个error事件-->
+    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error"></audio>
   </div>
 </template>
 
@@ -86,6 +87,12 @@
   const transform = prefixStyle('transform')
 
   export default {
+    data () {
+      return {
+        // 添加变量, 用来控制这首歌是否完全准备好了
+        songReady: false
+      }
+    },
     methods: {
       // 将播放器缩小
       back() {
@@ -162,6 +169,9 @@
       },
       // 播放下一首歌
       next() {
+        if (!this.songReady) { // 歌曲没有准备好
+          return // 直接停止, 不再向下运行
+        }
         // 算出下一首歌的索引值
         let index = this.currentIndex + 1
         if (index === this.playlist.length) { // 此时播放到了最后一首歌, 就让索引为0
@@ -176,8 +186,14 @@
         if (!this.playing) { // 如果是一个暂停的状态调用的话, 就改变一下playing的状态, 反正切到下首歌, 也是个播放状态
           this.togglePlaying()
         }
+
+        // 当我们点击的时候, 也就是切换了歌曲, 这个时候, 将标志位置为false
+        this.songReady = false
       },
       prev() {
+        if (!this.songReady) {
+          return
+        }
         let index = this.currentIndex - 1
         if (index === -1) { // 第一首歌, 再减就是 -1 了
           index = this.playlist.length - 1
@@ -186,6 +202,13 @@
         if (!this.playing) {
           this.togglePlaying()
         }
+        this.songReady = false
+      },
+      ready() {
+        // 歌曲添加完成了, 所以这个时候, 更改状态值
+        this.songReady = true
+      },
+      error() {
       },
       // 获取位置和需要偏移的量
       _getPosAndScale() {
