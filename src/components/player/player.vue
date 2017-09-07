@@ -31,6 +31,13 @@
         </div>
         <!-- 顶部的操作区 -->
         <div class="bottom">
+          <!-- 歌曲播放时间 -->
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper"></div>
+            <span class="time time-r"> {{format(currentSong.duration)}}</span>
+          </div>
+          <!-- 歌曲操作按钮 -->
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -71,8 +78,17 @@
       </div>
     </transition>
     <!-- 使用audio来播放音乐 -->
-    <!-- 当歌曲可以播放的时候, 会派发一个canplay事件 ; 发生错误, 请求不到数据的时候, 会派发一个error事件-->
-    <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error"></audio>
+    <!-- canplay事件: 当歌曲可以播放的时候, 会派发一个canplay事件-->
+    <!-- error事件: 发生错误, 请求不到数据的时候, 会派发一个error事件 -->
+    <!-- timeupdate: 歌曲时间播放更新的时候触发的事件 -->
+    <audio 
+      :src="currentSong.url" 
+      ref="audio" 
+      @canplay="ready" 
+      @error="error"
+      @timeupdate="updateTime"
+    >
+    </audio>
   </div>
 </template>
 
@@ -90,7 +106,9 @@
     data () {
       return {
         // 添加变量, 用来控制这首歌是否完全准备好了
-        songReady: false
+        songReady: false,
+        // 当前时间
+        currentTime: 0
       }
     },
     methods: {
@@ -211,6 +229,33 @@
       error() {
         // 歌曲加载失败的时候, 也更改状态位, 保证在加载错误的状态下, 能够正常使用
         this.songReady = true
+      },
+      updateTime(event) {
+        // audio 当前播放的时间
+        // 这是一个可读写的属性
+        // 其中的时间都是用时间戳来表示的, 所以我们需要转化为分和秒的形式
+        this.currentTime = event.target.currentTime
+      },
+      // 定义一个格式化的函数, 用来转化时间戳的时间表示方法, 转变成分和秒的形式
+      format(interval) {
+        // 首先是向下取整: 这样的话, 保留的只有秒位的整数
+        interval = Math.floor(interval)
+        // 求分位
+        const minute = Math.floor(interval / 60)
+        // 求秒位
+        const second = this._pad(interval % 60, 2)
+        return `${minute}:${second}`
+      },
+      // 定义一个补位函数, 将某个数字补位到多少
+      _pad(num, n) {
+        // 首先要获取整个数字的长度
+        let len = num.toString().length
+        // 判断这个数字的长度, 如果小于0的话, 就在前面补0
+        while (len < n) {
+          num = '0' + num
+          len++
+        }
+        return num
       },
       // 获取位置和需要偏移的量
       _getPosAndScale() {
