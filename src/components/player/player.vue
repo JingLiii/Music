@@ -35,13 +35,13 @@
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
+            <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disableCls">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
-            <div class="icon i-right">
+            <div class="icon i-righ" :class="disableCls">
               <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
@@ -209,6 +209,8 @@
         this.songReady = true
       },
       error() {
+        // 歌曲加载失败的时候, 也更改状态位, 保证在加载错误的状态下, 能够正常使用
+        this.songReady = true
       },
       // 获取位置和需要偏移的量
       _getPosAndScale() {
@@ -255,6 +257,10 @@
       cdCls() {
         // 现在cd这个界面的旋转 和 暂停
         return this.playing ? 'play' : 'play pause'
+      },
+      disableCls() {
+        // 如果加载错误的时候, 或者歌曲没有准备好的时候, 就添加一个提示样式
+        return this.songReady ? '' : 'disable'
       },
       // 在计算属性中, 从vuex中取出想要的数据
       ...mapGetters([
