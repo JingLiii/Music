@@ -1,5 +1,5 @@
 <template>
-  <div class="progress-bar" ref="progressBar">
+  <div class="progress-bar" ref="progressBar" @click="onClickPrgressBar">
     <div class="bar-inner">
       <div class="progress" ref="progress">
         <div 
@@ -77,11 +77,17 @@ export default {
       // 拖动结束的时候, 派发事件, 以达到拖动到相应位置的结果
       this._precentChange()
     },
+    onClickPrgressBar(event) {
+      this._offset(event.offsetX)
+      this._precentChange()
+    },
+    // 通知父组件, 里面改变了多少precent
     _precentChange() {
+      // 这里的计算是根据, 当前我们的进度条走的位置所计算出来
+      // 所以, 当我们想要改变的时候, 只需要更改进度条的位置, 并且告诉父组件, 进度条的改变即可
       const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
       const left = this.$refs.progress.clientWidth
       let newPrecent = left / barWidth
-      console.log(newPrecent)
       this.$emit('precentChange', newPrecent)
     },
     // 定义根据传入的偏移的量, 修改页面DOM元素的位置

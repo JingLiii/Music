@@ -254,6 +254,10 @@
       onPrecentChange(newPrecent) {
         // 监听到新的位置
         this.$refs.audio.currentTime = newPrecent * this.currentSong.duration
+        // 拖动后也播放
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       },
       // 定义一个补位函数, 将某个数字补位到多少
       _pad(num, n) {
