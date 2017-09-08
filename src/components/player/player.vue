@@ -35,7 +35,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar></progress-bar>
+              <progress-bar :precent="precent"></progress-bar>
             </div>
             <span class="time time-r"> {{format(currentSong.duration)}}</span>
           </div>
@@ -311,6 +311,10 @@
       disableCls() {
         // 如果加载错误的时候, 或者歌曲没有准备好的时候, 就添加一个提示样式
         return this.songReady ? '' : 'disable'
+      },
+      // 计算当前播放进度的百分比
+      precent() {
+        return this.currentTime / this.currentSong.duration
       },
       // 在计算属性中, 从vuex中取出想要的数据
       ...mapGetters([

@@ -1,9 +1,9 @@
 <template>
-  <div class="progress-bar">
+  <div class="progress-bar" ref="progressBar">
     <div class="bar-inner">
-      <div class="progress">
+      <div class="progress" ref="progress">
         <div class="progress-btn-wrapper">
-          <div class="progress-btn"></div>
+          <div class="progress-btn" ref="progressBtn"></div>
         </div>
       </div>
     </div>
@@ -11,7 +11,33 @@
 </template>
 
 <script>
+import {prefixStyle} from 'common/js/dom'
+// 定义播放点击按钮宽度的常量
+const progressBtnWidth = 16
+const transform = prefixStyle('transform')
+
 export default {
+  props: {
+    // 接受一个百分比, 用来控制显示
+    precent: {
+      type: Number,
+      default: 0
+    }
+  },
+  watch: {
+    // 监听歌曲不断的变化
+    precent(newPrecent) {
+      if (newPrecent >= 0) { // 感觉这是一个保证条件
+        // 定义一个外部的宽度, 也就是盛放的进度条的盒子的宽度
+        const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
+        // 定义我们现在进度的宽度
+        const offsetWidth = newPrecent * barWidth
+        // 应用样式
+        this.$refs.progress.style['width'] = `${offsetWidth}px`
+        this.$refs.progressBtn.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      }
+    }
+  }
 }
 </script>
 
