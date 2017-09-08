@@ -35,7 +35,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar :precent="precent"></progress-bar>
+              <progress-bar :precent="precent" @precentChange="onPrecentChange"></progress-bar>
             </div>
             <span class="time time-r"> {{format(currentSong.duration)}}</span>
           </div>
@@ -250,6 +250,10 @@
         // 求秒位
         const second = this._pad(interval % 60, 2)
         return `${minute}:${second}`
+      },
+      onPrecentChange(newPrecent) {
+        // 监听到新的位置
+        this.$refs.audio.currentTime = newPrecent * this.currentSong.duration
       },
       // 定义一个补位函数, 将某个数字补位到多少
       _pad(num, n) {

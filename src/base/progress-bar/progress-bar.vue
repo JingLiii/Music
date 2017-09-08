@@ -74,6 +74,15 @@ export default {
     },
     progressTouchEnd(event) {
       this.touch.initiated = false
+      // 拖动结束的时候, 派发事件, 以达到拖动到相应位置的结果
+      this._precentChange()
+    },
+    _precentChange() {
+      const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth
+      const left = this.$refs.progress.clientWidth
+      let newPrecent = left / barWidth
+      console.log(newPrecent)
+      this.$emit('precentChange', newPrecent)
     },
     // 定义根据传入的偏移的量, 修改页面DOM元素的位置
     _offset(offsetWidth) {
