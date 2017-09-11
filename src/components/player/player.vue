@@ -41,8 +41,8 @@
           </div>
           <!-- 歌曲操作按钮 -->
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="modeChange">
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i @click="prev" class="icon-prev"></i>
@@ -109,6 +109,9 @@
   // 引入进度条组件
   import ProgressBar from 'base/progress-bar/progress-bar'
   import ProgressCircle from 'base/progress-circle/progress-circle'
+
+  // 引入配置文件
+  import {playMode} from 'common/js/config'
 
   export default {
     data () {
@@ -262,6 +265,11 @@
           this.togglePlaying()
         }
       },
+      modeChange() {
+        // 如果直接给mode, 进行自加的话, 老是报错, 不清楚原因
+        const mode = (this.mode + 1) % 3
+        this.setMode(mode)
+      },
       // 定义一个补位函数, 将某个数字补位到多少
       _pad(num, n) {
         // 首先要获取整个数字的长度
@@ -304,7 +312,8 @@
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
         setPlayingSate: 'SET_PLAYING_STATE',
-        setCurrentIndex: 'SET_CURRENT_INDEX'
+        setCurrentIndex: 'SET_CURRENT_INDEX',
+        setMode: 'SET_PLAY_MODE'
       })
     },
     computed: {
@@ -327,13 +336,17 @@
       precent() {
         return this.currentTime / this.currentSong.duration
       },
+      iconMode() {
+        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+      },
       // 在计算属性中, 从vuex中取出想要的数据
       ...mapGetters([
         'fullScreen',
         'playlist',
         'currentSong',
         'playing',
-        'currentIndex'
+        'currentIndex',
+        'mode'
       ])
     },
     watch: {
