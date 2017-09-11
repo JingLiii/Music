@@ -12,6 +12,7 @@ const state = {
   // 播放的列表
   playlist: [],
   // 顺序列表
+  // 这个也就是原始列表
   sequenceList: [],
   // 播放模式
   // 默认是顺序播放

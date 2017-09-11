@@ -113,6 +113,9 @@
   // 引入配置文件
   import {playMode} from 'common/js/config'
 
+  // 来个工具方法
+  import {shuffle} from 'common/js/until'
+
   export default {
     data () {
       return {
@@ -267,8 +270,21 @@
       },
       modeChange() {
         // 如果直接给mode, 进行自加的话, 老是报错, 不清楚原因
+        // 修改, 播放模式的样式
         const mode = (this.mode + 1) % 3
         this.setMode(mode)
+
+        // 修改播放列表
+        let list = []
+
+        // 判断更改成了什么播放模式
+        if (mode === playMode.random) {
+          // 拿到原始列表
+          list = shuffle(this.sequenceList)
+        } else {
+          list = this.sequenceList
+        }
+        this.setPlayList(list)
       },
       // 定义一个补位函数, 将某个数字补位到多少
       _pad(num, n) {
@@ -313,7 +329,8 @@
         setFullScreen: 'SET_FULL_SCREEN',
         setPlayingSate: 'SET_PLAYING_STATE',
         setCurrentIndex: 'SET_CURRENT_INDEX',
-        setMode: 'SET_PLAY_MODE'
+        setMode: 'SET_PLAY_MODE',
+        setPlayList: 'SET_PLAYLIST'
       })
     },
     computed: {
@@ -346,7 +363,8 @@
         'currentSong',
         'playing',
         'currentIndex',
-        'mode'
+        'mode',
+        'sequenceList'
       ])
     },
     watch: {
