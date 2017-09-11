@@ -72,7 +72,7 @@
         </div>
         <div class="control">
           <!-- 因为父元素, 也有一个点击事件, 是会冒泡上去的, 所以使用的阻止冒泡的方法 -->
-          <progress-circle>
+          <progress-circle :radius="32" :precent="precent">
             <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
           </progress-circle>
         </div>
