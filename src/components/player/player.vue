@@ -279,12 +279,25 @@
 
         // 判断更改成了什么播放模式
         if (mode === playMode.random) {
-          // 拿到原始列表
+          // 将原始列表打乱重拍
           list = shuffle(this.sequenceList)
         } else {
+          // 保持原始列表
           list = this.sequenceList
         }
+        this._resetCurrentIndex(list)
         this.setPlayList(list)
+      },
+      // 重置现在播放的歌曲
+      _resetCurrentIndex(list) {
+        // 获取现在的索引
+        // 遍历我们打乱后的数组, 根据当前歌曲的id, 找到对应的索引值
+        // 如果回调函数返回true, 就会直接返回这个元素的index
+        let index = list.findIndex((item) => {
+          return item.id === this.currentSong.id
+        })
+        // 然后直接设置我们当前播放列表的id
+        this.setCurrentIndex(index)
       },
       // 定义一个补位函数, 将某个数字补位到多少
       _pad(num, n) {
@@ -369,7 +382,12 @@
     },
     watch: {
       // 获取当前歌曲的变化, 变化就开始播放
-      currentSong() {
+      // watch, 本身可以这样进行判断
+      currentSong(newSong, oldSong) {
+        // 如果id没有变, 我们就什么都不做
+        if (newSong.id === oldSong.id) {
+          return
+        }
         // dom还没有准备好, 是没有办法播放的
         // $nextTick在修改数据之后立即使用它, 然后等待DOM更新, 把回调函数延迟到下次DOM更新循环之后.
         this.$nextTick(() => {
