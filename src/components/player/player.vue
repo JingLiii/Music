@@ -2,8 +2,8 @@
   <div class="player" v-show="playlist.length>0">
     <!-- 这是一个具体的播放器 -->
     <transition name="normal"
-                @enter="enter"
-                @after-enter="afterEnter"
+                  @enter="enter"
+                  @after-enter="afterEnter"
                 @leave="leave"
                 @after-leave="alterLeave"
     >
@@ -72,7 +72,9 @@
         </div>
         <div class="control">
           <!-- 因为父元素, 也有一个点击事件, 是会冒泡上去的, 所以使用的阻止冒泡的方法 -->
-          <i @click.stop="togglePlaying" :class="miniIcon"></i>
+          <progress-circle>
+            <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
@@ -106,6 +108,7 @@
 
   // 引入进度条组件
   import ProgressBar from 'base/progress-bar/progress-bar'
+  import ProgressCircle from 'base/progress-circle/progress-circle'
 
   export default {
     data () {
@@ -353,7 +356,8 @@
       }
     },
     components: {
-      ProgressBar
+      ProgressBar,
+      ProgressCircle
     }
   }
 </script>
