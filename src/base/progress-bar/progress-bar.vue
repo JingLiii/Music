@@ -77,8 +77,17 @@ export default {
       // 拖动结束的时候, 派发事件, 以达到拖动到相应位置的结果
       this._precentChange()
     },
+    // 点击整个进度条的时候
     onClickPrgressBar(event) {
-      this._offset(event.offsetX)
+      // 设置我们进度条的位置
+      // 获取进度条在左边的一个距离
+      const rect = this.$refs.progressBar.getBoundingClientRect()
+      // 点击位置距离左边进度条的位置 = 点击位置的位置距离 - 进度条距离左边的距离
+      const offsetWidth = event.pageX - rect.left
+      this._offset(offsetWidth)
+      // 当我们点击进度条按钮的时候, 获取有问题, 获取了按钮距离左边的一个距离
+      // this._offset(event.offsetX)
+      // 通知父元素, 我们的百分比更改了多少
       this._precentChange()
     },
     // 通知父组件, 里面改变了多少precent
