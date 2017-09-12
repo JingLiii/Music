@@ -85,12 +85,14 @@
     <!-- canplay事件: 当歌曲可以播放的时候, 会派发一个canplay事件-->
     <!-- error事件: 发生错误, 请求不到数据的时候, 会派发一个error事件 -->
     <!-- timeupdate: 歌曲时间播放更新的时候触发的事件 -->
+    <!-- end: 歌曲播放结束 -->
     <audio 
       :src="currentSong.url" 
       ref="audio" 
       @canplay="ready" 
       @error="error"
       @timeupdate="updateTime"
+      @ended="end"
     >
     </audio>
   </div>
@@ -243,6 +245,22 @@
       error() {
         // 歌曲加载失败的时候, 也更改状态位, 保证在加载错误的状态下, 能够正常使用
         this.songReady = true
+      },
+      // 歌曲播放完成
+      end() {
+        // 判断当前的播放模式
+        if (this.mode === playMode.loop) {
+          this.loop()
+        } else {
+          this.next()
+        }
+      },
+      // 循环播放
+      loop() {
+        // 当前播放的歌曲的播放时间置为0
+        this.$refs.audio.currentTime = 0
+        // 开始播放
+        this.$refs.audio.play()
       },
       updateTime(event) {
         // audio 当前播放的时间
