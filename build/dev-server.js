@@ -26,6 +26,8 @@ var app = express()
 
 // 手动代理这个请求, 完成跨域
 var apiRoutes = express.Router()
+
+// 获取歌手详情列表
 apiRoutes.get('/getDiscList', function (req, res) {
   // console.log('接收到请求了')
   // 通过node发送请求, 修改refer与host
@@ -44,6 +46,39 @@ apiRoutes.get('/getDiscList', function (req, res) {
     console.log(e)
   })
 })
+
+
+// 获取歌词
+apiRoutes.get('/lyric', function (req, res) {
+  // 定义地址
+  var url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+
+  // 使用axios发送请求
+  axios.get(url, {
+    headers: {
+      referer: 'https://y.qq.com/portal/player.html'
+    },
+    params: req.query
+  }).catch((err) => { // 捕获错误, 并打印错误
+    console.log(err)
+  }).then((response) => { // 没有错误, 返回给前端数据
+    // 返回的时候, 鼠标格式化下数据
+    // 先拿下数据, 然后判断下类型
+    // 不明白为什么要判断是不是字符串类型, 感觉意义不大啊, 直接正则不就好了
+    var ret = response.data
+    if (typeof ret === 'string') {
+      // 建立正则表达式
+      var reg = /^\w+\(({[^()]+})\)$/ // 一脸懵逼啊
+      console.log(ret)
+      var mathes = ret.mathes(reg)
+      if (mathes) {
+        ret = JSON.parse(mathes[1])
+      }
+    }
+    res.json(ret)
+  })
+})
+
 
 // 使用这个api
 app.use('/api', apiRoutes)

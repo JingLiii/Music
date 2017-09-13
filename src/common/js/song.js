@@ -1,3 +1,6 @@
+// 获取获取歌词的方法
+import {getLyric} from 'api/song'
+import {ERR_OK} from 'api/config'
 // 定义歌曲类
 export default class Song {
   constructor({id, mid, singer, name, album, duration, image, url}) {
@@ -9,6 +12,14 @@ export default class Song {
     this.duration = duration
     this.image = image
     this.url = url
+  }
+  getLyric() {
+    getLyric(this.mid).then((res) => {
+      if (res.retcode === ERR_OK) {
+        this.lyric = res.lyric
+        console.log(this.lyric)
+      }
+    })
   }
 }
 
