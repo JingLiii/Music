@@ -28,7 +28,7 @@ export default class Song {
 export function createSong(musicData) {
   return new Song({
     id: musicData.songid,
-    mid: musicData.albummid,
+    mid: musicData.songmid,
     // 所有的歌手, 直接把数组中的时候, 拼接起来
     singer: filterSinger(musicData.singer),
     name: musicData.songname,
