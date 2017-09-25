@@ -69,8 +69,7 @@ apiRoutes.get('/lyric', function (req, res) {
     if (typeof ret === 'string') {
       // 建立正则表达式
       var reg = /^\w+\(({[^()]+})\)$/ // 一脸懵逼啊
-      console.log(ret)
-      var mathes = ret.mathes(reg)
+      var mathes = ret.match(reg)
       if (mathes) {
         ret = JSON.parse(mathes[1])
       }
